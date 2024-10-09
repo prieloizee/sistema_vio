@@ -1,5 +1,4 @@
-let organizadores = [];
-let idOrganizador = 0;
+const connect = require("../db/connect");
 module.exports = class organizadorController {
   static async createOrganizador(req, res) {
     const { nome, email, senha, telefone } = req.body;
@@ -16,30 +15,34 @@ module.exports = class organizadorController {
         .json({
           error: "Número inválido. Deve conter exatamente 11 dígitos numéricos",
         });
-    }
-    // Verifica se já existe um organizador com o mesmo email
-    const existingOrganizador = organizadores.find(
-      (organizador) => organizador.email === email
-    );
-    if (existingOrganizador) {
-      return res.status(400).json({ error: "Email já cadastrado" });
-    }
+    } else {
+      // Construção da query INSERT
+      const query = `INSERT INTO usuario (cpf, password, email, name) VALUES('${cpf}', '${password}', '${email}', '${name}')`;
+      // Executando a query criada
+      try {
+        connect.query(query, function (err) {
+          if (err) {
+            console.log(err);
+            console.log(err.code);
+            if (err.code === "ER_DUP_ENTRY") {
+              return res
+                .status(400)
+                .json({ error: "O Email já está vinculado a outro usuário" });
+            } else {
+              return res
+                .status(500)
+                .json({ error: "Erro interno do servidor" });
+            }
+          }else{
+            return res.status(201).json({message: "Organizador criado com sucesso"});
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({error:"Erro interno do servidor"})
+      }
 
-    const newOrganizador = {
-      id: idOrganizador++,
-      nome,
-      email,
-      senha,
-      telefone,
-    };
-    organizadores.push(newOrganizador);
-
-    return res
-      .status(201)
-      .json({
-        message: "Usuário criado com sucesso",
-        organizador: newOrganizador,
-      });
+    }
   }
 
   static async getAllOrganizador(req, res) {
