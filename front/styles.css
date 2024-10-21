@@ -119,5 +119,6 @@ li{
     background-color: #afd8de; /* Cor de fundo para destacar a seção  */
     padding: 10px; /* Espaçamento interno */
     border-radius: 8px; /* Bordas arredondadas */
-    flex: 1
+    flex: 1;
+    list-style-type: none;
 }
