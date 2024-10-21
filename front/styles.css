@@ -51,19 +51,19 @@ nav ul {
 }
 
 /* Estilo de cada item da lista de navegação */
-nav ul li {
+nav ul li1 {
     margin: 0 15px; /* Espaçamento horizontal entre os itens */
 }
 
 /* Estilo dos links de navegação */
-nav ul li a {
+nav ul li1 a {
     color: white; /* Cor do texto dos links */
     text-decoration: none; /* Remove o sublinhado dos links */
     font-weight: bold; /* Texto em negrito */
 }
 
 /* Estilo ao passar o mouse sobre os links */
-nav ul li a:hover {
+nav ul li1 a:hover {
     text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
 }
 
@@ -113,4 +113,11 @@ footer {
     width: 100%; /* Faz com que o rodapé ocupe toda a largura */
     position: absolute; /* Posiciona o rodapé de forma absoluta */
     bottom: 0; /* Posiciona o rodapé na parte inferior da página */
+}
+
+li{
+    background-color: #afd8de; /* Cor de fundo para destacar a seção  */
+    padding: 10px; /* Espaçamento interno */
+    border-radius: 8px; /* Bordas arredondadas */
+    flex: 1
 }
