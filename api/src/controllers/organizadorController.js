@@ -17,7 +17,7 @@ module.exports = class organizadorController {
         });
     } else {
       // Construção da query INSERT
-      const query = `INSERT INTO usuario (cpf, password, email, name) VALUES('${cpf}', '${password}', '${email}', '${name}')`;
+      const query = `INSERT INTO organizador (nome, email, senha, telefone) VALUES('${nome}', '${email}', '${senha}', '${telefone}')`;
       // Executando a query criada
       try {
         connect.query(query, function (err) {
@@ -27,7 +27,7 @@ module.exports = class organizadorController {
             if (err.code === "ER_DUP_ENTRY") {
               return res
                 .status(400)
-                .json({ error: "O Email já está vinculado a outro usuário" });
+                .json({ error: "O Email já está vinculado a outro organizador" });
             } else {
               return res
                 .status(500)
