@@ -20,7 +20,9 @@ router.delete('/organizador/:id',organizadorController.deleteOrganizador);
 router.post('/evento', eventoController.createEvento);
 router.get('/evento',eventoController.getAllEventos);
 router.put('/evento', eventoController.updateEvento);
-router.delete('/evento/:id', eventoController.deleteEvento)
+router.delete('/evento/:id', eventoController.deleteEvento);
+router.get('/evento/data',eventoController.getEventosPorData);
+router.get('/evento/proximo',eventoController.getEventosdia);
 
 //Router ingresso
 router.post('/ingresso', ingressoController.createIngresso);

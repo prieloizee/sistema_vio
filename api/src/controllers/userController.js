@@ -6,9 +6,7 @@ module.exports = class userController {
 
     if (!cpf || !email || !password || !name) {
       //Verifica se todos os campos estão preenchidos
-      return res
-        .status(400)
-        .json({ error: "Todos os campos devem ser preenchidos" });
+      return res.status(400).json({ error: "Todos os campos devem ser preenchidos" });
     } else if (isNaN(cpf) || cpf.length !== 11) {
       //Verifica se tem só números e se tem 11 dígitos
       return res.status(400).json({
