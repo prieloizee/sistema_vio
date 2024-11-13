@@ -179,7 +179,7 @@ module.exports = class eventoController {
       SELECT * FROM evento WHERE data_hora >= ? AND data_hora <= ?`;
     try {
      
-      connect.query(query,[dataInicialStr, dataFinalStr], (err, results) => {
+      connect.query(query,[dataInicial2, dataFinal2], (err, results) => {
         if (err) {console.error(err);return res.status(500).json({ error: "Erro ao buscar eventos" });
         }
 
