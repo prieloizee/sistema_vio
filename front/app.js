@@ -122,7 +122,7 @@ function getAllUsersTable(){
       tr.appendChild(tdName);
 
       const tdcpf=document.createElement("td");
-      tdcpf.textContent= usuario.telefone;
+      tdcpf.textContent= usuario.cpf;
       tr.appendChild(tdcpf);
 
       const tdEmail=document.createElement("td");
