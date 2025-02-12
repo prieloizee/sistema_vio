@@ -9,6 +9,8 @@ router.post('/user',userController.createUser);
 router.get('/user',userController.getAllUsers);
 router.put('/user',userController.updateUser);
 router.delete('/user/:id',userController.deleteUser);
+router.post('/login', userController.loginUser);
+//router.post('/cadastro',userController.createUser);
 
 //Router organizadorController
 router.post('/organizador',organizadorController.createOrganizador);
