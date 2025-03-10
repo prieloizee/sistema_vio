@@ -1,6 +1,7 @@
 const connect = require("../db/connect");
 const validateUser = require("../services/validateUser");
-const validateCPF = require("../services/validateCPF")
+const validateCPF = require("../services/validateCPF");
+const { response } = require("express");
 module.exports = class userController {
   static async createUser(req, res) {
     const { cpf, email, password, name, data_nascimento } = req.body;
@@ -8,15 +9,16 @@ module.exports = class userController {
     if (validation) {
       return res.status(400).json(validation);
     }
-    const cpfValidation= await validateCPF(cpf,null)
-    if(cpfValidation){
-      return res.status(400).json(cpfValidation)
+    const cpfValidation = await validateCPF(cpf, null);
+    if (cpfValidation) {
+      return res.status(400).json(cpfValidation);
     }
 
     const query = `INSERT INTO usuario (cpf, password, email, name, data_nascimento) VALUES('${cpf}', '${password}', '${email}', '${name}', '${data_nascimento}')`;
     // Executando a query criada
     try {
       connect.query(query, function (err) {
+        console.log(err)
         if (err) {
           if (err.code === "ER_DUP_ENTRY") {
             return res
@@ -59,16 +61,16 @@ module.exports = class userController {
   static async updateUser(req, res) {
     // Desestrutura e recupera os dados enviados via corpo da requisição
     const { id, name, email, password, cpf, data_nascimento } = req.body;
-    const validation = validateUser(req.body)
-    if(validation){
-      return res.status(400).json(validation)
+    const validation = validateUser(req.body);
+    if (validation) {
+      return res.status(400).json(validation);
     }
 
-    const cpfValidation= await validateCPF(cpf,id)
-    if(cpfValidation){
-      return res.status(400).json(cpfValidation)
+    const cpfValidation = await validateCPF(cpf, id);
+    if (cpfValidation) {
+      return res.status(400).json(cpfValidation);
     }
-   
+
     const query = `UPDATE usuario SET name=?,email=?,password=?, cpf=? WHERE id_usuario = ?`;
     const values = [name, email, password, cpf, data_nascimento, id];
 
