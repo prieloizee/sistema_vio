@@ -1,28 +1,27 @@
 delimiter //
- create procedure registrar-compra(
+
+create procedure registrar_compra(
     in p_id_usuario int,
     in p_id_ingresso int,
-    in p_id_quantidade int
- )
+    in p_quantidade int
+)
 begin
-  declare v_id_compra int;
+    declare v_id_compra int;
 
--- Criar registro na tabela compra
-insert into compra(data_compra, fk_id_usuario)
-values (now(),p_id_usuario);
+    insert into compra (data_compra, fk_id_usuario)
+    values (now(), p_id_usuario);
 
--- Obter o id da compra recem-criada
-set v_id_compra = last_insert_id();
+    set v_id_compra = last_insert_id();
 
--- Registar os ingressos comprados
-insert into ingresso_compra(fk_id_compra,fk_id_ingresso, quantidade)
-values (v_id_compra, p_id_ingresso, p_quantidade);
+    insert into ingresso_compra (fk_id_compra, fk_id_ingresso, quantidade)
+    values (v_id_compra, p_id_ingresso, p_quantidade);
 
-end; //
-delimiter ;
+    end; //
 
+    delimiter ; 
 
-delimiter //
+   delimiter //
+
 create procedure total_ingressos_usuario(
     in p_id_usuario int,
     out p_total_ingressos int
@@ -41,24 +40,88 @@ end; //
 
 delimiter ;
 
-show procedure status where db ='vio_priscila';
+show procedure status where db = 'vio_priscila';
 
 set @total = 0;
 
 call total_ingressos_usuario(2, @total);
 
-
 delimiter //
+
 create procedure registrar_presenca(
     in p_id_compra int,
     in p_id_evento int
 )
-begin 
-insert into presenca (data_hora_checkin, fk_id_evento, fk_id_compra)
-values (now(), p_id_evento, p_id_compra);
-end//
+begin
+    insert into presenca(data_hora_checkin, fk_id_evento, fk_id_compra)
+    values(now(), p_id_evento, p_id_compra);
+end //
+
 delimiter ;
 
-call registrar_presenca(1,3);
+-- procedure para resumo do usuario
+delimiter $$
+
+create procedure resumo_usuario(in pid int)
+begin 
+    declare nome varchar(100);
+    declare email varchar(100);
+    declare totalrs decimal(10,2);
+    declare faixa varchar(20);
+
+    -- busca o nome e o email do usuario
+    select u.name, u.email into nome, email
+    from usuario u 
+    where u.id_usuario = pid;
+
+    -- Chamada das funçoes especificas já criadas
+
+    set totalrs = calcula_total_gasto(pid);
+    set faixa = buscar_faixa_etaria_usuario(pid);
+
+    -- exibe os dados formatados
+    select nome as nome_usuario,
+            email as email_usuario,
+            totalrs as total_gasto,
+            faixa as faixa_etaria;
+        
+    end; $$
+delimiter ;
 
 
+-- Atividade total evento 14/04
+
+delimiter $$
+
+create procedure resumo_evento(in pid_evento int)
+begin
+    declare nome_evento varchar(100);
+    declare data_evento date;
+    declare total_ingressos int;
+    declare renda_total decimal(10,2);
+
+   
+    select e.nome, e.data_hora into nome_evento, data_evento
+    from evento e
+    where e.id_evento = pid_evento;
+
+    
+    select ifnull(SUM(ic.quantidade), 0) into total_ingressos
+    from ingresso_compra ic
+    join ingresso i ON i.id_ingresso = ic.fk_id_ingresso
+    where i.fk_id_evento = pid_evento;
+
+    
+    select ifnull(SUM(i.preco * ic.quantidade), 0) into renda_total
+    from ingresso_compra ic
+    join ingresso i on i.id_ingresso = ic.fk_id_ingresso
+    where i.fk_id_evento = pid_evento;
+
+    
+    select nome_evento as nome_evento,
+           data_evento as data_evento,
+           total_ingressos as total_ingressos_vendidos,
+           renda_total as renda_total;
+end $$
+
+delimiter ;
