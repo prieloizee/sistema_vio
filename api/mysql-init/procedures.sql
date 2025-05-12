@@ -1,24 +1,3 @@
-delimiter //
-
-create procedure registrar_compra(
-    in p_id_usuario int,
-    in p_id_ingresso int,
-    in p_quantidade int
-)
-begin
-    declare v_id_compra int;
-
-    insert into compra (data_compra, fk_id_usuario)
-    values (now(), p_id_usuario);
-
-    set v_id_compra = last_insert_id();
-
-    insert into ingresso_compra (fk_id_compra, fk_id_ingresso, quantidade)
-    values (v_id_compra, p_id_ingresso, p_quantidade);
-
-    end; //
-
-    delimiter ; 
 
    delimiter //
 
