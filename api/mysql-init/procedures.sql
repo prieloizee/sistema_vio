@@ -104,3 +104,28 @@ begin
 end $$
 
 delimiter ;
+
+delimiter //
+create procedure registrar_compra(
+    in p_id_usuario int,
+    in p_id_ingresso int,
+    in p_quantidade int
+)
+begin
+    declare v_id_compra int;
+
+-- Criar registro na tabela 'compra'
+insert into compra (data_compra, fk_id_usuario)
+    values (now(), p_id_usuario);
+
+-- Obter o ID da compra recém criada
+set v_id_compra = last_insert_id();
+
+-- Registrar os ingressos comprados
+insert into ingresso_compra (fk_id_compra, fk_id_ingresso, quantidade)
+    values (v_id_compra, p_id_ingresso, p_quantidade); 
+
+end; //
+delimiter ;
+
+CALL registrar_compra(2, 10, 3);
