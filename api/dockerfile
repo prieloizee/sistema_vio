@@ -1,6 +1,7 @@
 ## Baixa e executa a imagem do node na versão Alpine (versão simplificada)
 FROM node:alpine
 
+##docker-compose up --build
 ## Define o local onde o app irá rodar no disco do container
 ## O caminho do Dev quem escolhe
 WORKDIR /usr/app
