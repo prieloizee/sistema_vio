@@ -4,6 +4,11 @@ const organizadorController = require ("../controllers/organizadorController")
 const eventoController = require("../controllers/eventoController")
 const ingressoController = require("../controllers/ingressoController")
 const verifyJWT= require('../services/verifyJWT');
+const compraController = require("../controllers/compraController");
+
+//compraController
+router.post('/comprasimples', compraController.registrarCompraSimples);
+router.post('/compra',compraController.registrarCompra);
 
 //Router userController
 router.post('/user',userController.createUser);
