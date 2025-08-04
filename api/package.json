@@ -1,13 +1,13 @@
 {
-  "name": "dev",
+  "name": "gabrielapi",
   "version": "1.0.0",
-  "description": "Criando um Crud de usuarios",
+  "description": "criando um crud de usuarios",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js"
   },
-  "author": "Priscila",
+  "author": "gabriel",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.7.7",
@@ -16,6 +16,7 @@
     "dotenv-safe": "^9.1.0",
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
     "mysql2": "^3.11.3"
   }
 }

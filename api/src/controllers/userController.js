@@ -3,18 +3,20 @@ const jwt = require("jsonwebtoken");
 const validateUser = require("../services/validateUser");
 const validateCpf = require("../services/validateCpf");
 const bcrypt = require("bcrypt");
-const SALT_ROUNDS= 10 ;
+const SALT_ROUNDS = 10; //número de salvos
 
 module.exports = class userController {
   static async createUser(req, res) {
     const { cpf, email, password, name, data_nascimento } = req.body;
 
     const validationError = validateUser(req.body);
+    console.log("antes do if: ", validationError);
     if (validationError) {
       return res.status(400).json(validationError);
     }
 
     try {
+      console.log("try: ", validationError);
       const cpfError = await validateCpf(cpf);
       if (cpfError) {
         return res.status(400).json(cpfError);
@@ -33,7 +35,6 @@ module.exports = class userController {
                 return res.status(400).json({ error: "Email já cadastrado" });
               }
             } else {
-              console.log(err);
               return res
                 .status(500)
                 .json({ error: "Erro interno do servidor", err });
@@ -135,7 +136,6 @@ module.exports = class userController {
     }
   }
 
-  // Método de Login - Implementar
   static async loginUser(req, res) {
     const { email, password } = req.body;
 
@@ -158,24 +158,25 @@ module.exports = class userController {
 
         const user = results[0];
 
-        //comparar a senha enviada na requisição com o hesh do banco
-        const passwordOK =  bcrypt.compareSync(password, user.password);
+        // Comparar a senha enviada na requisição com o hash do banco
+        const passwordOK = bcrypt.compareSync(password, user.password);
 
         if (!passwordOK) {
           return res.status(401).json({ error: "Senha incorreta" });
         }
 
-        const token = jwt.sign({ id: user.id_usuario }, process.env.SECRET, {expiresIn: "1h",}
-        );
+        const token = jwt.sign({ id: user.id_usuario }, process.env.SECRET, {
+          expiresIn: "1h",
+        });
 
-        //remove um atributo de objeto(o que é o delete)
+        // Remove um atributo de um objeto
         delete user.password;
 
         return res.status(200).json({
-          message:"Login bem-sucedido",
+          message: "Login bem-sucedido",
           user,
-          token
-        })
+          token,
+        });
       });
     } catch (error) {
       console.error("Erro ao executar a consulta:", error);

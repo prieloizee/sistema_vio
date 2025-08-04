@@ -2,6 +2,9 @@
 FROM node:alpine
 
 ##docker-compose up --build
+
+##docker-compose down -v
+
 ## Define o local onde o app irá rodar no disco do container
 ## O caminho do Dev quem escolhe
 WORKDIR /usr/app

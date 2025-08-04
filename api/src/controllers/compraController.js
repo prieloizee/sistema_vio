@@ -9,10 +9,10 @@ module.exports = class compraController {
     if (!id_usuario || !id_ingresso || !quantidade) {
       return res
         .status(400)
-        .json({ error: "Dados obrigatórios não enviados!!" });
+        .json({ error: "Dados obrigatórios não enviados!" });
     } //fim do if
 
-    //Chamada da procedure diretamente com os parâmetros
+    // Chamada da Procedure diretamente com os parâmetros
     connect.query(
       "call registrar_compra(?, ?, ?);",
       [id_usuario, id_ingresso, quantidade],
@@ -20,19 +20,19 @@ module.exports = class compraController {
         if (err) {
           console.log("Erro ao registrar compra: ", err.message);
           return res.status(500).json({ error: err.message });
-        } //fim do err
+        } // fim err
 
         return res.status(201).json({
-          message: "Compra registrada com sucesso via procedure!!",
+          message: "Compra registrada com sucesso via procedure!",
           dados: {
             id_usuario,
             id_ingresso,
             quantidade,
-          }, // array
-        }); //fim do return
-      } //fim da resposta
-    ); //fim da query
-  } // fim da registrarCompraSimples
+          },
+        }); // fim return 201
+      } // fim da resposta
+    ); // fim da query
+  } //fim registrarCompraSimples
 
   static async registrarCompra(req, res) {
     const { id_usuario, ingressos } = req.body;
@@ -40,60 +40,58 @@ module.exports = class compraController {
     console.log("Body: ", id_usuario, ingressos);
 
     connect.query(
-        "insert into compra (data_compra, fk_id_usuario) values (now(), ?)",
-        [id_usuario],
-        (err, result) => {
-            if(err){
-                //Em caso de erro na inserção da compra, retorna 500
-                console.log("Erro ao inserir compra: ", err);
-                return res.status(500).json({error:"Erro ao criar a compra no sistema!!!!!"});
-            }
+      "insert into compra (data_compra, fk_id_usuario) values (now(), ?)",
+      [id_usuario],
+      (err, result) => {
+        if (err) {
+          // Em caso de erro na inserção da compra, retorna 500
+          console.log("Erro ao inserir compra: ", err);
+          return res
+            .status(500)
+            .json({ error: "Erro ao criar a compra no sistema!" });
+        }
 
-            // recupera o id da compra e recém criada
-            const id_compra = result.insertId;
+        // recupera o id da compra recém criada
+        const id_compra = result.insertId;
+        console.log("Compra criada com o ID: ", id_compra);
 
-            console.log("Compra criada com o id: ", id_compra);
+        // Inicializa o índice dos ingressos a serem processados
+        let index = 0;
 
-            //inicializa o indice dos ingressos a serem processados
-            //let = variavel
-            let index = 0; 
+        // Função recursiva para processar cada ingresso sequencialmente
+        function processarIngressos() {
+          // condição: todos os ingressos foram processados?
+          if (index >= ingressos.length) {
+            return res.status(201).json({
+              message: "Compra realizada com sucesso!",
+              id_compra,
+              ingressos,
+            }); // fim do return
+          } // fim do if
 
-            //para chegar até o ultimo elemento e quando chegar ele para
-            //função recursiva para processar cada ingresso sequencialmente
-            function processarIngressos(){
-                //condição: todos os ingressos foram processados?
-                if(index >= ingressos.length){
-                    return res.status(201).json({
-                        message: "Compra realizada com sucesso!!!",
-                        id_compra,
-                        ingressos
-                    });// fim do return
-                }//fim do if
+          // Obter o ingresso atual com base no índice
+          const ingresso = ingressos[index];
 
-                //obter o ingresso atual com base no indice
-                const ingresso = ingressos[index];
+          // Chamada da procedure para registrar as compras
+          connect.query(
+            "call registrar_compra2 (?, ?, ?);",
+            [ingresso.id_ingresso, id_compra, ingresso.quantidade],
+            (err) => {
+              if (err) {
+                return res.status(500).json({
+                  error: `Erro ao registrar ingresso ${index + 1}`,
+                  detalhes: err.message,
+                }); // fim return
+              } // fim if
 
-                //chamada da procedure para registrar as compras
-                connect.query(
-                    "call registrar_compra2 (?, ?, ?);",
-                    [ingresso.id_ingresso, id_compra, ingresso.quantidade], 
-                    (err) => {
-                        if(err){
-                            return res.status(500).json({
-                                error: `Erro ao registrar ingresso ${index + 1}`,
-                                detalhes: err.message,
-                            });//fim do return
-                        }//fim do if 
+              index++;
+              processarIngressos();
+            } // fim err
+          ); // fim da query
+        } //fim function - processarIngressos
 
-                        index++;
-                        processarIngressos();
-                    } // fim do err
-                ); //fim da query
-            }//fim da function
-
-            processarIngressos();
-
-        }// fim da resposta
-    ); //fim da query
-  } //fim da registrar_Compra
-}; //fim da nossa controller
+        processarIngressos();
+      } //fim err
+    ); // fim da query
+  } // fim resgistrarCompra
+}; // fim compraController

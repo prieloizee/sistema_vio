@@ -1,21 +1,22 @@
-const jwt = require ("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-//pega dados e responde a requisição
-function verifyJWT(req, res, next){
-    const token = req.headers["authorization"]
+function veriyfyJWT(req, res, next) {
+  const token = req.headers["authorization"];
 
-    if(!token){
-        return res.status(401).json({auth:false, message: "Token não foi fornecido"})
+  if (!token) {
+    return res
+      .status(401)
+      .json({ auth: false, message: "Token não foi fornecido" });
+  }
+
+  jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    if (err) {
+      return res
+        .status(403)
+        .json({ auth: false, message: "Falha na autenticação do token" });
     }
-
-    jwt.verify(token, process.env.SECRET,(err,decoded)=>{
-        if(err){
-            return res.status(403).json({auth:false, message:"Falha na autenticação do Token"})
-        }
-        req.userId= decoded.id;
-        next();
-    })
-
+    req.userId = decoded.id;
+    next();
+  });
 }
-
-module.exports = verifyJWT;
+module.exports = veriyfyJWT;
