@@ -23,6 +23,7 @@ const eventoController = require("../controllers/eventoController");
 
 //rotas eventoController
 router.post("/evento", upload.single("imagem"), eventoController.createEvento);
+router.get("/evento/imagem/:id", eventoController.getImagemEvento);
 router.get("/evento", veriyfyJWT, eventoController.getAllEventos);
 router.put("/evento", eventoController.updateEvento);
 router.delete("/evento/:id", eventoController.deleteEvento);
